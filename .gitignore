@@ -161,3 +161,7 @@ data
 
 # VS Code
 .vscode
+
+# Videos
+*.avi
+*.mov
