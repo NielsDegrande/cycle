@@ -1,0 +1,106 @@
+[tool.poetry]
+name = "cycle"
+version = "0.1.0"
+description = "Recycle workflows."
+authors = [ "Niels Degrande <niels@degran.de>" ]
+readme = "README.md"
+
+[tool.poetry.scripts]
+cycle = "cycle.__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+coloredlogs = "^15.0.1"
+python-box = "^7.3.0"
+python-dotenv = "^1.0.1"
+
+[build-system]
+requires = [ "poetry-core" ]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pip-audit = "^2.7.3"
+pre-commit = "~4.0"
+pyright = "^1.1.389"
+pytest = "~8.3"
+pytest-cov = "~6.0"
+pytest-mock = "~3.14"
+pytest-timeout = "~2.3"
+pytest-xdist = "~3.6"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+add-trailing-comma = "*"
+black = "*"
+codespell = "*"
+ipython = "*"
+isort = "*"
+pandas-stubs = "*"
+pre-commit = "*"
+ruff = "*"
+sqlfluff = "*"
+types-PyYAML = "*"
+vulture = "*"
+
+[tool.pytest.ini_options]
+timeout = "60"
+addopts = [
+    "--cov-report=html:test-reports/htmlcov",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=xml:test-reports/coverage.xml",
+    "--cov=cycle",
+    "--junitxml=test-reports/junit/junit.xml",
+    "--no-cov-on-fail",
+    "--strict-markers",
+    "--verbose",
+    "-r sxX",
+]
+cache_dir = ".cache"
+# MLflow has a dependency on pkg_resources which is deprecated.
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning"
+]
+testpaths = "tests"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+exclude_also = [
+    # Do not complain if tests do not hit defensive assertion code.
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Do not complain if non-runnable code is not run.
+    "if __name__ == .__main__.:",
+]
+ignore_errors = true
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [ "ALL" ]
+ignore = [
+    "D203", # one-blank-line-before-class (incompatible with D211).
+    "D213", # multi-line-summary-second-line (incompatible with D212).
+    # Do not complain about TODOs with missing author or link.
+    "FIX002",
+    "TD002",
+    "TD003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Do not complain if __init__.py files have unused imports.
+"__init__.py" = [ "F401" ]
+# Do not complain if tests use the assert keyword.
+"tests/*" = [ "S101" ]
