@@ -11,9 +11,10 @@ cycle = "cycle.__main__:main"
 [tool.poetry.dependencies]
 python = "^3.12"
 coloredlogs = "^15.0.1"
+google-genai = "^0.2.2"
+mss = "^10.0.0"
 numpy = "^2.2.0"
 opencv-python-headless = "^4.10.0.84"
-pillow = "^11.0.0"
 python-box = "^7.3.0"
 python-dotenv = "^1.0.1"
 

@@ -1,0 +1,8 @@
+directories:
+  recordings: recordings
+  transcripts: transcripts
+
+models:
+  default: gemini-2.0-flash-exp
+
+separator: ---#---

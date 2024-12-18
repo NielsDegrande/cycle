@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "action": {
+      "description": "The action to perform. The available actions are:\n* `key`: Press a key or key-combination on the keyboard.\n  - This supports xdotool's `key` syntax.\n  - Examples: \"a\", \"Return\", \"alt+Tab\", \"ctrl+s\", \"Up\", \"KP_0\" (for the numpad 0 key).\n* `type`: Type a string of text on the keyboard.\n* `cursor_position`: Get the current (x, y) pixel coordinate of the cursor on the screen.\n* `mouse_move`: Move the cursor to a specified (x, y) pixel coordinate on the screen.\n* `left_click`: Click the left mouse button.\n* `left_click_drag`: Click and drag the cursor to a specified (x, y) pixel coordinate on the screen.\n* `right_click`: Click the right mouse button.\n* `middle_click`: Click the middle mouse button.\n* `double_click`: Double-click the left mouse button.\n* `screenshot`: Take a screenshot of the screen.",
+      "enum": [
+        "key",
+        "type",
+        "mouse_move",
+        "left_click",
+        "left_click_drag",
+        "right_click",
+        "middle_click",
+        "double_click",
+        "screenshot",
+        "cursor_position"
+      ],
+      "type": "string"
+    },
+    "coordinate": {
+      "description": "(x, y): The x (pixels from the left edge) and y (pixels from the top edge) coordinates to move the mouse to. Required only by `action=mouse_move` and `action=left_click_drag`.",
+      "type": "array"
+    },
+    "text": {
+      "description": "Required only by `action=type` and `action=key`.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "type": "object"
+}

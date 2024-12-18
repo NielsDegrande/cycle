@@ -1,11 +1,13 @@
 """Package entry point."""
 
 import logging
-import tkinter as tk
 
 from dotenv import load_dotenv
 
-from cycle.screen_recorder import ScreenRecorder
+from configs import CONFIGS_DIRECTORY
+from cycle.app import CycleApp
+from cycle.utils.config import load_config
+from cycle.utils.constants import Extension
 
 
 def main() -> None:
@@ -14,10 +16,8 @@ def main() -> None:
 
     log_.info("Load configuration.")
     load_dotenv()
-
-    root = tk.Tk()
-    ScreenRecorder(root)
-    root.mainloop()
+    config = load_config([CONFIGS_DIRECTORY / f"config.{Extension.YAML}"])
+    CycleApp(config)
 
 
 if __name__ == "__main__":
