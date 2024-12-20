@@ -4,8 +4,6 @@ Recycle your workflows.
 
 ![cycle logo](assets/cycle-logo.png)
 
-<!-- TODO: Add badges. -->
-
 ## References
 
 The Computer Use for MacOS implementation is inspired by [PallavAg's Claude Computer Use Demo for MacOS](https://github.com/PallavAg/claude-computer-use-macos), and the [Antrophic quickstart guide](https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo/computer_use_demo).

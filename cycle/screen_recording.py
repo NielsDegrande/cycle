@@ -35,18 +35,18 @@ def capture_screen(
             queue.put(frame)
             elapsed_time = time.time() - start_time
             time.sleep(max(1 / FRAMES_PER_SECOND - elapsed_time, 0))
+    # Add sentinel to queue to indicate capturing is finished.
+    queue.put(None)
 
 
 def encode_video(
     queue: Queue,
     output_directory: Path,
-    recording: Event,
 ) -> None:
     """Write frames from the queue to the video file.
 
     :param queue: Queue to retrieve frames.
     :param output_directory: Directory to save the recording.
-    :param recording: Event to control recording.
     """
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # noqa: DTZ005
     output_filename = output_directory / f"screen_recording_{timestamp}.mp4"
@@ -63,11 +63,16 @@ def encode_video(
         (frame_width, frame_height),
     )
 
-    while recording.is_set():
-        frame = queue.get()
-        # Convert from BGRA to BGR (OpenCV uses BGR).
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
-        out.write(frame)
+    while True:
+        if not queue.empty():
+            frame = queue.get()
+            if frame is None:
+                break
+            # Convert from BGRA to BGR (OpenCV uses BGR).
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+            out.write(frame)
+        else:
+            time.sleep(0.01)
 
     out.release()
 
@@ -91,7 +96,7 @@ def record_screen(
     )
     encode_process = Process(
         target=encode_video,
-        args=(queue, output_directory, recording),
+        args=(queue, output_directory),
     )
 
     capture_process.start()

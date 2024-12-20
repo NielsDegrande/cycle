@@ -1,8 +1,12 @@
 directories:
   recordings: recordings
+  screenshots: screenshots
   transcripts: transcripts
 
 models:
+  computer_use: claude-3-5-sonnet-20241022
   default: gemini-2.0-flash-exp
 
 separator: ---#---
+images_to_keep_in_history: 10
+max_tokens: 4096

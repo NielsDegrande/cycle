@@ -167,5 +167,9 @@ data
 *.mov
 *.mp4
 
-# Transcripts
+# Transcripts and screenshots.
 transcripts
+screenshots
+
+# CoPilot
+.github/copilot-instructions.md
