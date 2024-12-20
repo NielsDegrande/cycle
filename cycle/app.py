@@ -1,5 +1,6 @@
 """Cycle Application."""
 
+import asyncio
 import multiprocessing
 import threading
 import time
@@ -15,6 +16,7 @@ from box import Box
 from cycle.recording_transcription import transcribe_recording
 from cycle.screen_recording import record_screen
 from cycle.utils.strings import change_video_to_text_extension, split_on_separator
+from cycle.workflow_automation import automate_workflow
 
 
 class CycleApp:
@@ -27,9 +29,9 @@ class CycleApp:
         self.recording = False
         self.recording_event = multiprocessing.Event()
         self.recordings_directory = Path(self.config.directories.recordings)
-        Path.mkdir(self.recordings_directory, exist_ok=True)
+        self.recordings_directory.mkdir(exist_ok=True)
         self.transcripts_directory = Path(self.config.directories.transcripts)
-        Path.mkdir(self.transcripts_directory, exist_ok=True)
+        self.transcripts_directory.mkdir(exist_ok=True)
 
         self._create_gui()
         self._run()
@@ -134,6 +136,14 @@ class CycleApp:
             width=button_width,
         )
         self.transcribe_button.pack(pady=5, padx=(0, 20), anchor="w")
+
+        self.playback_button = ttk.Button(
+            button_frame,
+            text="Playback Workflow",
+            command=self._playback_workflow,
+            width=button_width,
+        )
+        self.playback_button.pack(pady=5, padx=(0, 20), anchor="w")
 
     def _populate_monitor_dropdown(self: Self) -> None:
         """Populate the monitor dropdown with available monitors."""
@@ -250,7 +260,7 @@ class CycleApp:
         with Path.open(transcript_path, "r") as file:
             transcript = file.read()
 
-        cleaned_transcript = "\n".join(
+        cleaned_transcript = "".join(
             split_on_separator(
                 transcript,
                 self.config.separator,
@@ -303,3 +313,50 @@ class CycleApp:
         recording_path = self.recordings_directory / selected_recording
 
         webbrowser.open(recording_path.absolute().as_uri())
+
+    def _spawn_workflow_thread(self: Self, transcript: str, instruction: str) -> None:
+        """Run the automate workflow in a separate thread.
+
+        :param transcript: The workflow transcript.
+        :param instruction: The user-provided instruction.
+        """
+        asyncio.run(
+            automate_workflow(
+                config=self.config,
+                transcript=transcript,
+                instruction=instruction,
+            ),
+        )
+
+    def _playback_workflow(self: Self) -> None:
+        """Playback the workflow."""
+        selected_index = self.recordings_listbox.curselection()
+        if not selected_index:
+            return
+
+        selected_recording = self.recordings_listbox.get(first=selected_index)
+        transcript_path = self.transcripts_directory / change_video_to_text_extension(
+            selected_recording,
+        )
+        if not transcript_path.exists():
+            messagebox.showerror(
+                "Transcript Not Found",
+                f"Transcript for {selected_recording} not found. "
+                "Transcribe the recording first.",
+            )
+            return
+
+        with Path.open(transcript_path, "r") as file:
+            transcript = file.read()
+
+        instruction = simpledialog.askstring("Instruction", "Enter the instruction:")
+        if instruction:
+            proceed = messagebox.askokcancel(
+                "Start Workflow",
+                f"Click OK to start the workflow with instruction '{instruction}'.",
+            )
+            if proceed:
+                threading.Thread(
+                    target=self._spawn_workflow_thread,
+                    args=(transcript, instruction),
+                ).start()

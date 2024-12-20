@@ -8,6 +8,7 @@ from time import sleep
 from box import Box
 from google import genai
 from google.genai import types
+from tenacity import retry, stop_after_attempt
 
 from cycle.utils.constants import FIVE_SECONDS, Extension, PromptType
 from cycle.utils.prompts import get_hydrated_prompt
@@ -16,6 +17,7 @@ from prompts import PROMPTS_DIRECTORY
 log_ = logging.getLogger(__name__)
 
 
+@retry(stop=stop_after_attempt(3))
 def transcribe_recording(config: Box, file_name: str) -> str:
     """Transcribe a recording to a workflow.
 
