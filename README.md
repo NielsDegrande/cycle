@@ -12,7 +12,7 @@ The Computer Use for MacOS implementation is inspired by [PallavAg's Claude Comp
 
 Generative Process Automation:
 
-1. Record a workflow with macOS Screen Recording.
+1. Record a workflow with built-in screen recording.
 1. Process the video to generate instructions.
 1. Use computer use to playback the recording,
    combined with a custom instruction.
